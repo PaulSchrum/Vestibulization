@@ -23,6 +23,11 @@ namespace RxSpatial
       protected Vector3D velocity;
       protected Vector3D position;
 
+      protected Tuning Tune_AccelMagnitude = new Tuning(aveStillVal: 0.9981376, squelchThreshold: 0.0007);
+      protected Tuning Tune_GyroX = new Tuning(aveStillVal: -0.66485, squelchThreshold: 0.22);
+      protected Tuning Tune_GyroY = new Tuning(aveStillVal: 0.0298, squelchThreshold: 0.17);
+      protected Tuning Tune_GyroZ = new Tuning(aveStillVal: 0.2774, squelchThreshold: 0.28);
+
       protected long cnt = 0;
  
       public SpatialDataStreamer()
