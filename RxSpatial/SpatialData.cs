@@ -11,12 +11,12 @@ namespace RxSpatial
 {
    public struct SpatialData
    {
-      public Double? AccelerationX;
-      public Double? AccelerationY;
-      public Double? AccelerationZ;
-      public Double? AngularRateX;
-      public Double? AngularRateY;
-      public Double? AngularRateZ;
+      public Double AccelerationX;
+      public Double AccelerationY;
+      public Double AccelerationZ;
+      public Double AngularRateX;
+      public Double AngularRateY;
+      public Double AngularRateZ;
       public long milliseconds;
 
       private static int count;
@@ -29,8 +29,8 @@ namespace RxSpatial
 
       public SpatialData(Spatial spatial, SpatialDataEventArgs e)
       {
-         AccelerationX = AccelerationY = AccelerationZ = null;
-         AngularRateX = AngularRateY = AngularRateZ = null;
+         AccelerationX = AccelerationY = AccelerationZ = 0.0;
+         AngularRateX = AngularRateY = AngularRateZ = 0.0;
          milliseconds = stopwatch.ElapsedMilliseconds;
          if (null == spatial) return;
          if (spatial.accelerometerAxes.Count > 0 &&
