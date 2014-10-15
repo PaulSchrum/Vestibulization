@@ -27,6 +27,7 @@ namespace RxSpatial
       protected Tuning Tune_GyroX = new Tuning(aveStillVal: -0.66485, squelchThreshold: 0.22);
       protected Tuning Tune_GyroY = new Tuning(aveStillVal: 0.0298, squelchThreshold: 0.17);
       protected Tuning Tune_GyroZ = new Tuning(aveStillVal: 0.2774, squelchThreshold: 0.28);
+      protected Tuning Tune_GyroMagnitude = new Tuning(aveStillVal: 0.258, squelchThreshold: 0.17);
 
       protected long cnt = 0;
  

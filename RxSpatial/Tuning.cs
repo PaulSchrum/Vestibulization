@@ -10,6 +10,7 @@ namespace RxSpatial
    {
       public Double AverageStillValue { get; set; }
       public Double SquelchThreshold { get; set; }
+      public RunningStats runAverage { get; set; }
 
       public Tuning() { }
 
@@ -17,6 +18,22 @@ namespace RxSpatial
       {
          AverageStillValue = aveStillVal;
          SquelchThreshold = squelchThreshold;
+         runAverage = new RunningStats(12);
+      }
+
+      public Tuning(Double aveStillVal, Double squelchThreshold, int runningAverageSampleSize) : this(aveStillVal, squelchThreshold)
+      {
+         runAverage = new RunningStats(runningAverageSampleSize);
+      }
+
+      public void AddDataPoint(Double val)
+      {
+         runAverage.Add(val);
+      }
+
+      public Double GetReducedValue()
+      {
+         return SquelchFilter(runAverage.RunningAverage);
       }
 
       public Double SquelchFilter (Double inputVal)

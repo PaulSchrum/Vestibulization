@@ -6,14 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Windows.Media.Media3D;
 
 namespace RxSpatial
 {
-   public struct SpatialData
+   public class SpatialData
    {
-      public Double AccelerationX;
-      public Double AccelerationY;
-      public Double AccelerationZ;
+      public Vector3D Acceleration { get; internal set; }
       public Double AngularRateX;
       public Double AngularRateY;
       public Double AngularRateZ;
@@ -29,17 +28,19 @@ namespace RxSpatial
 
       public SpatialData(Spatial spatial, SpatialDataEventArgs e)
       {
-         AccelerationX = AccelerationY = AccelerationZ = 0.0;
          AngularRateX = AngularRateY = AngularRateZ = 0.0;
          milliseconds = stopwatch.ElapsedMilliseconds;
-         if (null == spatial) return;
+         if (null == spatial) throw new ArgumentNullException("Spatial");
          if (spatial.accelerometerAxes.Count > 0 &&
             e != null)
          {
-            AccelerationX = e.spatialData[0].Acceleration[0];
-            AccelerationY = e.spatialData[0].Acceleration[1];
-            AccelerationZ = e.spatialData[0].Acceleration[2];
+            Acceleration = new Vector3D(
+               e.spatialData[0].Acceleration[0],
+               e.spatialData[0].Acceleration[1],
+               e.spatialData[0].Acceleration[2]
+               );
          }
+         else Acceleration = new Vector3D();
          if (spatial.gyroAxes.Count > 0)
          {
             AngularRateX = spatial.gyroAxes[0].AngularRate;
@@ -61,9 +62,9 @@ namespace RxSpatial
          }
          String saveString = 
             milliseconds.ToString() + "," +
-            AccelerationX.ToString() + "," +
-            AccelerationY.ToString() + "," +
-            AccelerationZ.ToString() + "," +
+            Acceleration.X.ToString() + "," +
+            Acceleration.Y.ToString() + "," +
+            Acceleration.Z.ToString() + "," +
             AngularRateX.ToString() + "," +
             AngularRateY.ToString() + "," +
             AngularRateZ.ToString();
