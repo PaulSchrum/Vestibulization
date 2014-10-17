@@ -45,7 +45,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccelerometerFrame.cs" />
+    <Compile Include="RawData.cs" />
     <Compile Include="RunningStats.cs" />
+    <Compile Include="SmoothedData.cs" />
     <Compile Include="SpatialData.cs" />
     <Compile Include="SpatialDataStreamer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -14,9 +14,11 @@ using System.Diagnostics;
 
 namespace RxSpatial
 {
-   public class SpatialDataStreamer : INotifyPropertyChanged, IDisposable
+   public class SpatialDataStreamer : IObservable<AccelerometerFrame>,
+      INotifyPropertyChanged, IDisposable
    {
       private Spatial spatial=null;
+      private AccelerometerFrame accelFrame;
       public SpatialData LastDataPoint { get; set; }
       public List<SpatialData> SpatialDataList=new List<SpatialData>();
       protected RunningStats RunningStat;
@@ -51,6 +53,21 @@ namespace RxSpatial
          spatial.open(-1);
       }
 
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="observer"></param>
+      /// <returns></returns>
+      /// <see cref=">http://msdn.microsoft.com/en-us/library/dd782981(v=vs.110).aspx"/>
+      public IDisposable Subscribe(IObserver<AccelerometerFrame> observer)
+      {
+         if (!accelObservers.Contains(observer))
+            accelObservers.Add(observer);
+         return new Unsubscriber(accelObservers, observer);
+      }
+      private List<IObserver<AccelerometerFrame>> accelObservers= new List<IObserver<AccelerometerFrame>>();
+
+
       protected StreamWriter outputFileStream=null;
       protected Stopwatch runningTime;
       private WriteState writeState_;
@@ -67,7 +84,7 @@ namespace RxSpatial
             {
                outputFileStream = new StreamWriter(FileName);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                writeState = WriteState.Closed;
             }
@@ -97,9 +114,9 @@ namespace RxSpatial
          }
          if (spatial.gyroAxes.Count > 0)
          {
-            GyroX += e.spatialData[0].AngularRate[0];
-            GyroY += e.spatialData[0].AngularRate[1];
-            GyroZ += e.spatialData[0].AngularRate[2];
+            GyroX = e.spatialData[0].AngularRate[0];
+            GyroY = e.spatialData[0].AngularRate[1];
+            GyroZ = e.spatialData[0].AngularRate[2];
          }
          if (SpatialDataList.Count < 100)
             this.SpatialDataList.Add(this.LastDataPoint);
@@ -107,7 +124,20 @@ namespace RxSpatial
          this.TotalAccel = Math.Sqrt(accelX_ * accelX_ + accelY_ * accelY_ + accelZ_ * accelZ_);
          RunningStat.Add(this.AccelZ);
 
+         accelFrame = new AccelerometerFrame(
+            AccelX,
+            AccelY,
+            AccelZ,
+            GyroX,
+            GyroY,
+            GyroZ
+            );
+
+
          updatePositionAndStuff();
+         foreach (var observer in this.accelObservers)
+            observer.OnNext(accelFrame);
+
 
          writeToFileIfNeeded();
 
@@ -352,18 +382,38 @@ namespace RxSpatial
       }
 
       public event PropertyChangedEventHandler PropertyChanged;
-       public void RaisePropertyChanged(String prop)
-       {
-          if (null != PropertyChanged)
-          {
-             PropertyChanged(this, new PropertyChangedEventArgs(prop));
-          }
-       }
+      public void RaisePropertyChanged(String prop)
+      {
+         if (null != PropertyChanged)
+         {
+            PropertyChanged(this, new PropertyChangedEventArgs(prop));
+         }
+      }
 
        public void Dispose()
        {
           spatial.close();
           if (null != outputFileStream) outputFileStream.Dispose();
+       }
+
+       private class Unsubscriber : IDisposable
+       {
+          private List<IObserver<AccelerometerFrame>> _observers;
+          private IObserver<AccelerometerFrame> _observer;
+
+          public Unsubscriber(
+             List<IObserver<AccelerometerFrame>> observers,
+             IObserver<AccelerometerFrame> observer)
+          {
+             this._observers = observers;
+             this._observer = observer;
+          }
+
+          public void Dispose()
+          {
+             if (_observer != null && _observers.Contains(_observer))
+                _observers.Remove(_observer);
+          }
        }
    }
 
@@ -384,4 +434,6 @@ namespace RxSpatial
          return "Err: Write State";
       }
    }
+
+
 }
