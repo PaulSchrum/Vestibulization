@@ -14,11 +14,11 @@ using System.Diagnostics;
 
 namespace RxSpatial
 {
-   public class SpatialDataStreamer_raw : IObservable<AccelerometerFrame>,
+   public class SpatialDataStreamer_raw : IObservable<AccelerometerFrame_raw>,
       IDisposable
    {
       private Spatial spatial=null;
-      private AccelerometerFrame accelFrame;
+      private AccelerometerFrame_raw accelFrame;
       public SpatialData LastDataPoint { get; set; }
       public List<SpatialData> SpatialDataList=new List<SpatialData>();
       protected RunningStats RunningStat;
@@ -63,13 +63,13 @@ namespace RxSpatial
       /// <param name="observer"></param>
       /// <returns></returns>
       /// <see cref=">http://msdn.microsoft.com/en-us/library/dd782981(v=vs.110).aspx"/>
-      public IDisposable Subscribe(IObserver<AccelerometerFrame> observer)
+      public IDisposable Subscribe(IObserver<AccelerometerFrame_raw> observer)
       {
          if (!accelObservers.Contains(observer))
             accelObservers.Add(observer);
          return new Unsubscriber(accelObservers, observer);
       }
-      private List<IObserver<AccelerometerFrame>> accelObservers= new List<IObserver<AccelerometerFrame>>();
+      private List<IObserver<AccelerometerFrame_raw>> accelObservers= new List<IObserver<AccelerometerFrame_raw>>();
 
 
       protected StreamWriter outputFileStream=null;
@@ -130,7 +130,7 @@ namespace RxSpatial
          this.TotalAccel = Math.Sqrt(AccelX * AccelX + AccelY * AccelY + AccelZ * AccelZ);
          RunningStat.Add(AccelZ);
 
-         accelFrame = new AccelerometerFrame(
+         accelFrame = new AccelerometerFrame_raw(
             AccelX,
             AccelY,
             AccelZ,
@@ -169,13 +169,13 @@ namespace RxSpatial
          this.IsAttached = true;
       }
 
-      protected void updatePositionAndStuff(AccelerometerFrame frame)
+      protected void updatePositionAndStuff(AccelerometerFrame_raw frame)
       {
          if (RunningStat.RunningAverageDeviation.RunningAverage > 0.002 ||
              RunningStat.RunningAverageDeviation.RunningAverage < -0.002)
          {
-            velocity.X += frame.RawData.Acceleration.X;
-            velocity.Y += frame.RawData.Acceleration.Y;
+            velocity.X += frame.Acceleration.X;
+            velocity.Y += frame.Acceleration.Y;
             velocity.Z += (1.0 - RunningStat.RunningAverageDeviation.RunningAverage) / 100;
 
             position.X += velocity.X;
@@ -290,12 +290,12 @@ namespace RxSpatial
 
        private class Unsubscriber : IDisposable
        {
-          private List<IObserver<AccelerometerFrame>> _observers;
-          private IObserver<AccelerometerFrame> _observer;
+          private List<IObserver<AccelerometerFrame_raw>> _observers;
+          private IObserver<AccelerometerFrame_raw> _observer;
 
           public Unsubscriber(
-             List<IObserver<AccelerometerFrame>> observers,
-             IObserver<AccelerometerFrame> observer)
+             List<IObserver<AccelerometerFrame_raw>> observers,
+             IObserver<AccelerometerFrame_raw> observer)
           {
              this._observers = observers;
              this._observer = observer;

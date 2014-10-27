@@ -45,7 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccelerometerFrame.cs" />
+    <Compile Include="AccelerometerFrame_raw.cs" />
     <Compile Include="RawData.cs" />
     <Compile Include="RunningStats.cs" />
     <Compile Include="SmoothedData.cs" />
