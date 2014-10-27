@@ -14,8 +14,8 @@ using System.Diagnostics;
 
 namespace RxSpatial
 {
-   public class SpatialDataStreamer : IObservable<AccelerometerFrame>,
-      INotifyPropertyChanged, IDisposable
+   public class SpatialDataStreamer_raw : IObservable<AccelerometerFrame>,
+      IDisposable
    {
       private Spatial spatial=null;
       private AccelerometerFrame accelFrame;
@@ -31,9 +31,13 @@ namespace RxSpatial
       protected Tuning Tune_GyroZ = new Tuning(aveStillVal: 0.2774, squelchThreshold: 0.28);
       protected Tuning Tune_GyroMagnitude = new Tuning(aveStillVal: 0.258, squelchThreshold: 0.17);
 
+      public event EventHandler AttachedStateChanged;
+      public event EventHandler CalibratingStateChanged;
+      public event EventHandler WriteStateChanged;
+
       protected long cnt = 0;
  
-      public SpatialDataStreamer()
+      public SpatialDataStreamer_raw()
       {
          velocity = new Vector3D();
          position = new Vector3D();
@@ -105,6 +109,8 @@ namespace RxSpatial
       private void spatial_SpatialData(object sender, SpatialDataEventArgs e)
       {
          //if (++cnt % 5 != 0) return;
+         Double AccelX, AccelY, AccelZ, GyroX, GyroY, GyroZ;
+         AccelX = AccelY = AccelZ = GyroX = GyroY = GyroZ = 0.0;
          this.LastDataPoint = new SpatialData(spatial, e);
          if (spatial.accelerometerAxes.Count > 0)
          {
@@ -121,8 +127,8 @@ namespace RxSpatial
          if (SpatialDataList.Count < 100)
             this.SpatialDataList.Add(this.LastDataPoint);
 
-         this.TotalAccel = Math.Sqrt(accelX_ * accelX_ + accelY_ * accelY_ + accelZ_ * accelZ_);
-         RunningStat.Add(this.AccelZ);
+         this.TotalAccel = Math.Sqrt(AccelX * AccelX + AccelY * AccelY + AccelZ * AccelZ);
+         RunningStat.Add(AccelZ);
 
          accelFrame = new AccelerometerFrame(
             AccelX,
@@ -134,7 +140,7 @@ namespace RxSpatial
             );
 
 
-         updatePositionAndStuff();
+         updatePositionAndStuff(accelFrame);
          foreach (var observer in this.accelObservers)
             observer.OnNext(accelFrame);
 
@@ -163,13 +169,13 @@ namespace RxSpatial
          this.IsAttached = true;
       }
 
-      protected void updatePositionAndStuff()
+      protected void updatePositionAndStuff(AccelerometerFrame frame)
       {
          if (RunningStat.RunningAverageDeviation.RunningAverage > 0.002 ||
              RunningStat.RunningAverageDeviation.RunningAverage < -0.002)
          {
-            velocity.X += this.accelX_;
-            velocity.Y += this.accelY_;
+            velocity.X += frame.RawData.Acceleration.X;
+            velocity.Y += frame.RawData.Acceleration.Y;
             velocity.Z += (1.0 - RunningStat.RunningAverageDeviation.RunningAverage) / 100;
 
             position.X += velocity.X;
@@ -216,8 +222,9 @@ namespace RxSpatial
          set 
          { 
             writeState_ = value;
-            RaisePropertyChanged("writeState");
             OptionValue = writeState_.ToString();
+            if (null == WriteStateChanged) return;
+            WriteStateChanged(this, new WriteStateEventArg(writeState_));
          }
       }
 
@@ -228,7 +235,8 @@ namespace RxSpatial
          set
          {
             isCalibrating_ = value;
-            RaisePropertyChanged("IsCalibrating");
+            if (null == CalibratingStateChanged) return;
+            CalibratingStateChanged(this, new BooleanState(isCalibrating_));
          }
       }
 
@@ -239,112 +247,8 @@ namespace RxSpatial
          set
          {
             isAttached_ = value;
-            RaisePropertyChanged("IsAttached");
-         }
-      }
-
-      private Double accelX_;
-      public Double AccelX
-      {
-         get { return accelX_; }
-         set
-         {
-            accelX_ = value;
-            RaisePropertyChanged("AccelX");
-         }
-      }
-
-      private Double accelY_;
-      public Double AccelY
-      {
-         get { return accelY_; }
-         set
-         {
-            accelY_ = value;
-            RaisePropertyChanged("AccelY");
-         }
-      }
-
-      private Double accelZ_;
-      public Double AccelZ
-      {
-         get { return accelZ_; }
-         set
-         {
-            accelZ_ = value;
-            RaisePropertyChanged("AccelZ");
-         }
-      }
-
-      private Double gyroX_;
-      public Double GyroX
-      {
-         get { return gyroX_; }
-         set
-         {
-            gyroX_ = value;
-            if (gyroX_ > 360.0) gyroX_ = 0.0;
-            if (gyroX_ < -360.0) gyroX_ = 0.0;
-            RaisePropertyChanged("GyroX");
-         }
-      }
-
-      private Double gyroY_;
-      public Double GyroY
-      {
-         get { return gyroY_; }
-         set
-         {
-            gyroY_ = value;
-            if (gyroY_ > 360.0) gyroY_ = 0.0;
-            if (gyroY_ < -360.0) gyroY_ = 0.0;
-            RaisePropertyChanged("GyroY");
-         }
-      }
-
-      private Double gyroZ_;
-      public Double GyroZ
-      {
-         get { return gyroZ_; }
-         set
-         {
-            gyroZ_ = value;
-            if (gyroZ_ > 360.0) gyroZ_ = 0.0;
-            if (gyroZ_ < -360.0) gyroZ_ = 0.0;
-            RaisePropertyChanged("GyroZ");
-         }
-      }
-
-      private Double compassX_;
-      public Double CompassX
-      {
-         get { return compassX_; }
-         set
-         {
-            compassX_ = value;
-            RaisePropertyChanged("CompassX");
-         }
-      }
-
-      private Double compassY_;
-      public Double CompassY
-      {
-         get { return compassY_; }
-         set
-         {
-            compassY_ = value;
-            RaisePropertyChanged("CompassY");
-         }
-      }
-
-      private Double compassZ_;
-      public Double CompassZ
-      {
-         get { return compassZ_; }
-         set
-         {
-            compassZ_ = value;
-            RaisePropertyChanged("CompassZ");
+            if (null == AttachedStateChanged) return;
+            AttachedStateChanged(this, new BooleanState(isAttached_));
          }
       }
 
@@ -355,7 +259,6 @@ namespace RxSpatial
          private set 
          {
             totalAccel_ = value;
-            RaisePropertyChanged("TotalAccel");
          }
       }
 
@@ -366,7 +269,6 @@ namespace RxSpatial
          set
          {
             optionText_ = value;
-            RaisePropertyChanged("OptionText");
          }
       }
 
@@ -377,16 +279,6 @@ namespace RxSpatial
          set
          {
             optionValue_ = value;
-            RaisePropertyChanged("OptionValue");
-         }
-      }
-
-      public event PropertyChangedEventHandler PropertyChanged;
-      public void RaisePropertyChanged(String prop)
-      {
-         if (null != PropertyChanged)
-         {
-            PropertyChanged(this, new PropertyChangedEventArgs(prop));
          }
       }
 
@@ -435,5 +327,18 @@ namespace RxSpatial
       }
    }
 
+   public class BooleanState : EventArgs
+   {
+      internal BooleanState(bool isTrue_) { this.IsTrue = isTrue_; }
+      public bool IsTrue;
+   }
+
+   public class WriteStateEventArg : EventArgs
+   {
+      internal WriteStateEventArg(WriteState arg)
+         { this.WriteState = arg; }
+
+      public WriteState WriteState;
+   }
 
 }

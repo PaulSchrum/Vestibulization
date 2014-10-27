@@ -50,7 +50,7 @@
     <Compile Include="RunningStats.cs" />
     <Compile Include="SmoothedData.cs" />
     <Compile Include="SpatialData.cs" />
-    <Compile Include="SpatialDataStreamer.cs" />
+    <Compile Include="SpatialDataStreamer_raw.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tuning.cs" />
   </ItemGroup>
