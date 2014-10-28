@@ -17,19 +17,19 @@ namespace RxSpatial
    public class SpatialDataStreamer_raw : IObservable<AccelerometerFrame_raw>,
       IDisposable
    {
-      private Spatial spatial=null;
-      private AccelerometerFrame_raw accelFrame;
+      protected Spatial spatial=null;
+      protected AccelerometerFrame_raw accelFrame_raw { get; set; }
       public SpatialData LastDataPoint { get; set; }
-      public List<SpatialData> SpatialDataList=new List<SpatialData>();
+      //public List<SpatialData> SpatialDataList=new List<SpatialData>();  // move to child class later
       protected RunningStats RunningStat;
-      protected Vector3D velocity;
-      protected Vector3D position;
+      protected Vector3D velocity;  // move to child class later
+      protected Vector3D position;  // move to child class later
 
-      protected Tuning Tune_AccelMagnitude = new Tuning(aveStillVal: 0.9981376, squelchThreshold: 0.0007);
-      protected Tuning Tune_GyroX = new Tuning(aveStillVal: -0.66485, squelchThreshold: 0.22);
-      protected Tuning Tune_GyroY = new Tuning(aveStillVal: 0.0298, squelchThreshold: 0.17);
-      protected Tuning Tune_GyroZ = new Tuning(aveStillVal: 0.2774, squelchThreshold: 0.28);
-      protected Tuning Tune_GyroMagnitude = new Tuning(aveStillVal: 0.258, squelchThreshold: 0.17);
+      //protected Tuning Tune_AccelMagnitude = new Tuning(aveStillVal: 0.9981376, squelchThreshold: 0.0007);
+      //protected Tuning Tune_GyroX = new Tuning(aveStillVal: -0.66485, squelchThreshold: 0.22);
+      //protected Tuning Tune_GyroY = new Tuning(aveStillVal: 0.0298, squelchThreshold: 0.17);
+      //protected Tuning Tune_GyroZ = new Tuning(aveStillVal: 0.2774, squelchThreshold: 0.28);
+      //protected Tuning Tune_GyroMagnitude = new Tuning(aveStillVal: 0.258, squelchThreshold: 0.17);
 
       public event EventHandler AttachedStateChanged;
       public event EventHandler CalibratingStateChanged;
@@ -53,9 +53,12 @@ namespace RxSpatial
          spatial.close();
          spatial.Attach += new AttachEventHandler(spatial_Attach);
          spatial.Detach += new DetachEventHandler(spatial_Detach);
-         spatial.SpatialData += new SpatialDataEventHandler(spatial_SpatialData);
+         accelEventHandler = new SpatialDataEventHandler(spatial_SpatialData_raw);
+         spatial.SpatialData += accelEventHandler;
          spatial.open(-1);
       }
+
+      protected Phidgets.Events.SpatialDataEventHandler accelEventHandler;
 
       /// <summary>
       /// 
@@ -67,7 +70,7 @@ namespace RxSpatial
       {
          if (!accelObservers.Contains(observer))
             accelObservers.Add(observer);
-         return new Unsubscriber(accelObservers, observer);
+         return new Unsubscriber<AccelerometerFrame_raw>(accelObservers, observer);
       }
       private List<IObserver<AccelerometerFrame_raw>> accelObservers= new List<IObserver<AccelerometerFrame_raw>>();
 
@@ -106,10 +109,8 @@ namespace RxSpatial
          this.IsAttached = false;
       }
 
-      private void spatial_SpatialData(object sender, SpatialDataEventArgs e)
+      protected void inTakeData(object sender, SpatialDataEventArgs e)
       {
-         //if (++cnt % 5 != 0) return;
-         Double AccelX, AccelY, AccelZ, GyroX, GyroY, GyroZ;
          AccelX = AccelY = AccelZ = GyroX = GyroY = GyroZ = 0.0;
          this.LastDataPoint = new SpatialData(spatial, e);
          if (spatial.accelerometerAxes.Count > 0)
@@ -124,13 +125,8 @@ namespace RxSpatial
             GyroY = e.spatialData[0].AngularRate[1];
             GyroZ = e.spatialData[0].AngularRate[2];
          }
-         if (SpatialDataList.Count < 100)
-            this.SpatialDataList.Add(this.LastDataPoint);
 
-         this.TotalAccel = Math.Sqrt(AccelX * AccelX + AccelY * AccelY + AccelZ * AccelZ);
-         RunningStat.Add(AccelZ);
-
-         accelFrame = new AccelerometerFrame_raw(
+         accelFrame_raw = new AccelerometerFrame_raw(
             AccelX,
             AccelY,
             AccelZ,
@@ -138,11 +134,28 @@ namespace RxSpatial
             GyroY,
             GyroZ
             );
+      }
+
+      protected Double AccelX;
+      protected Double AccelY;
+      protected Double AccelZ;
+      protected Double GyroX;
+      protected Double GyroY;
+      protected Double GyroZ;
+      private void spatial_SpatialData_raw(object sender, SpatialDataEventArgs e)
+      {
+         inTakeData(sender, e);
+         //if (++cnt % 5 != 0) return;
+         //if (SpatialDataList.Count < 100)
+         //   this.SpatialDataList.Add(this.LastDataPoint);
+
+         this.TotalAccel = Math.Sqrt(AccelX * AccelX + AccelY * AccelY + AccelZ * AccelZ);
+         RunningStat.Add(AccelZ);
 
 
-         updatePositionAndStuff(accelFrame);
+         updatePositionAndStuff(accelFrame_raw);
          foreach (var observer in this.accelObservers)
-            observer.OnNext(accelFrame);
+            observer.OnNext(accelFrame_raw);
 
 
          writeToFileIfNeeded();
@@ -288,14 +301,14 @@ namespace RxSpatial
           if (null != outputFileStream) outputFileStream.Dispose();
        }
 
-       private class Unsubscriber : IDisposable
+       internal class Unsubscriber<T> : IDisposable
        {
-          private List<IObserver<AccelerometerFrame_raw>> _observers;
-          private IObserver<AccelerometerFrame_raw> _observer;
+          private List<IObserver<T>> _observers;
+          private IObserver<T> _observer;
 
           public Unsubscriber(
-             List<IObserver<AccelerometerFrame_raw>> observers,
-             IObserver<AccelerometerFrame_raw> observer)
+             List<IObserver<T>> observers,
+             IObserver<T> observer)
           {
              this._observers = observers;
              this._observer = observer;
@@ -307,6 +320,7 @@ namespace RxSpatial
                 _observers.Remove(_observer);
           }
        }
+
    }
 
    public enum WriteState

@@ -9,6 +9,12 @@ namespace RxSpatial
 {
    public class AccelerometerFrame_raw
    {
+      protected AccelerometerFrame_raw(AccelerometerFrame_raw other)
+       {
+           Acceleration = other.Acceleration;
+           Rotation = other.Rotation;
+       }
+
       internal AccelerometerFrame_raw(
          Double accX,
          Double accY,
