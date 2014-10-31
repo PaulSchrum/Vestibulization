@@ -9,7 +9,7 @@ namespace RxSpatial
 {
    public class AccelerometerFrame_processed : AccelerometerFrame_raw
    {
-      internal AccelerometerFrame_processed(
+      public AccelerometerFrame_processed(
             AccelerometerFrame_raw currentRawFrame,
             AccelerometerFrame_processed previousFrame
             ) : base(currentRawFrame)

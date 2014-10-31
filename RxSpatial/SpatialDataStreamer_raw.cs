@@ -145,6 +145,7 @@ namespace RxSpatial
       private void spatial_SpatialData_raw(object sender, SpatialDataEventArgs e)
       {
          inTakeData(sender, e);
+         if (null == accelFrame_raw) return;
          //if (++cnt % 5 != 0) return;
          //if (SpatialDataList.Count < 100)
          //   this.SpatialDataList.Add(this.LastDataPoint);
