@@ -1,47 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Phidgets.Events;
 
 namespace RxSpatial
 {
-   public class SpatialDataStreamer_processed : 
-      SpatialDataStreamer_raw, 
-      IObservable<AccelerometerFrame_processed>
+   public class SpatialDataStreamer_processed
    {
-      public SpatialDataStreamer_processed() : base()
+      public IObservable<AccelerometerFrame_processed> DeviceDataStream { get; private set; }
+      private SpatialDataStreamer_raw2 rawStreamer = null;
+      public SpatialDataStreamer_processed()
       {
-         spatial.SpatialData -= base.accelEventHandler;
-         accelEventHandler = new SpatialDataEventHandler(spatial_SpatialData_processed);
-         spatial.SpatialData += accelEventHandler;
+         rawStreamer = SpatialDataStreamer_raw2.Create();
+         DeviceDataStream = SetupDeviceStream();
+         DeviceDataStreamDebug = SetupDebugDeviceStream();
       }
 
-      protected AccelerometerFrame_processed previousProcessedFrame = null;
-      protected AccelerometerFrame_processed currentProcessedFrame;
-
-      public IDisposable Subscribe(IObserver<AccelerometerFrame_processed> observer)
+      public IObservable<AccelerometerFrame_raw> DeviceDataStreamDebug { get; private set; }
+      private IObservable<AccelerometerFrame_raw> SetupDebugDeviceStream()
       {
-         if (!accelObservers.Contains(observer))
-            accelObservers.Add(observer);
-         return new Unsubscriber<AccelerometerFrame_processed>(accelObservers, observer);
+         var v = rawStreamer.DeviceDataStream;
+         return v;
       }
-      private List<IObserver<AccelerometerFrame_processed>> accelObservers =
-         new List<IObserver<AccelerometerFrame_processed>>();
 
-      private void spatial_SpatialData_processed(object sender, SpatialDataEventArgs e)
+      private IObservable<AccelerometerFrame_processed> SetupDeviceStream()
       {
-         inTakeData(sender, e);
-         currentProcessedFrame =
-            new AccelerometerFrame_processed(
-               base.accelFrame_raw,
-               this.previousProcessedFrame);
+         return rawStreamer.DeviceDataStream
+            
+            
+            .Scan(new AccelerometerFrame_processed(),
+            (AccelerometerFrame_processed prevProcessedFrame, AccelerometerFrame_raw newRawFrame) =>
+            {
+               return new AccelerometerFrame_processed(
+                  newRawFrame, prevProcessedFrame);
+            }
+            );
 
-         foreach (var observer in this.accelObservers)
-            observer.OnNext(currentProcessedFrame);
-
-         previousProcessedFrame = currentProcessedFrame;
       }
+
    }
+
 }

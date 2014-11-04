@@ -30,5 +30,7 @@ namespace RxSpatial
 
       public Vector3D Acceleration { get; internal set; }
       public Vector3D Rotation { get; internal set; }
+
    }
+
 }
