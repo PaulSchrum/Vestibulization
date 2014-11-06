@@ -24,10 +24,11 @@ namespace RxSpatial
       public RunningStats RunningAverageDeviation { get; private set; }
       protected bool TrackRAD { get; set; }
 
-      protected RunningStats(int sampleSize, bool trackRAD)
+      internal RunningStats(int sampleSize, bool trackRAD)
       {
          SampleSize = sampleSize;
-         values = new List<double>(SampleSize);
+         int reserveSize = SampleSize > 2000 ? 2000 : SampleSize;
+         values = new List<double>(reserveSize);
          Count = CurrentIndex = FirstCountUpIndex = 0;
          RunningAverage = 0.0;
          TrackRAD = trackRAD;

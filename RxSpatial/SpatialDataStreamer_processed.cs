@@ -29,8 +29,6 @@ namespace RxSpatial
       private IObservable<AccelerometerFrame_processed> SetupDeviceStream()
       {
          return rawStreamer.DeviceDataStream
-            
-            
             .Scan(new AccelerometerFrame_processed(),
             (AccelerometerFrame_processed prevProcessedFrame, AccelerometerFrame_raw newRawFrame) =>
             {

@@ -22,6 +22,10 @@ namespace RxSpatial
          if (null == currentRawFrame) 
             throw new NullReferenceException("currentRawFrame");
 
+         this.SecondsSinceLast = currentRawFrame.TimeStampSeconds - previousFrame.TimeStampSeconds;
+
+         if (false == mayProceed(currentRawFrame)) return;
+         this.g = averageG;
          this.Acceleration = currentRawFrame.Acceleration;
          setTrueAcceleration(currentRawFrame);
          if(null == previousFrame)
@@ -31,17 +35,23 @@ namespace RxSpatial
                y: TrueAcceleration.Y, 
                z: TrueAcceleration.Z);
             this.Position = new Vector3D(0.0, 0.0, 0.0);
+            this.Orientation = new Vector3D(0.0, 0.0, 0.0);
          }
          else
          {
             this.Velocity = new Vector3D(
-               x: previousFrame.Velocity.X + TrueAcceleration.X,
-               y: previousFrame.Velocity.Y + TrueAcceleration.Y,
-               z: previousFrame.Velocity.Z + TrueAcceleration.Z);
+               x: previousFrame.Velocity.X + TrueAcceleration.X * SecondsSinceLast,
+               y: previousFrame.Velocity.Y + TrueAcceleration.Y * SecondsSinceLast,
+               z: previousFrame.Velocity.Z + TrueAcceleration.Z * SecondsSinceLast);
             this.Position = new Vector3D(
-               x: previousFrame.Position.X + this.Velocity.X,
-               y: previousFrame.Position.Y + this.Velocity.Y,
-               z: previousFrame.Position.Z + this.Velocity.Z);
+               x: previousFrame.Position.X + this.Velocity.X * SecondsSinceLast,
+               y: previousFrame.Position.Y + this.Velocity.Y * SecondsSinceLast,
+               z: previousFrame.Position.Z + this.Velocity.Z * SecondsSinceLast);
+            this.Orientation = new Vector3D(
+               x: previousFrame.Orientation.X + (currentRawFrame.Rotation.X - averageRotationRate.X) * SecondsSinceLast,
+               y: previousFrame.Orientation.Y + (currentRawFrame.Rotation.Y - averageRotationRate.Y) * SecondsSinceLast,
+               z: previousFrame.Orientation.Z + (currentRawFrame.Rotation.Y - averageRotationRate.Z) * SecondsSinceLast
+               );
          }
       }
 
@@ -67,9 +77,11 @@ namespace RxSpatial
       /// <summary>
       /// Acceleration sensed by the accelerometer with g taken out.
       /// </summary>
-      public Vector3D TrueAcceleration { get; set; }
+      public Vector3D TrueAcceleration { get; internal set; }
       public Vector3D Velocity { get; internal set; }
       public Vector3D Position { get; internal set; }
+      public Double SecondsSinceLast { get; internal set; }
+      public Vector3D Orientation { get; internal set; }
 
       public void SetGravityVectorWhileStill(Vector3D newG)
       {
@@ -78,5 +90,80 @@ namespace RxSpatial
 
       public static bool InvariableGvector { get; set; }
 
+      private enum InitState
+      {
+         SettingUp = 0,
+         GettingAverageG = 1,
+         CleaningUp = 2,
+         Done = 3,
+      }
+      private static InitState initState_ = InitState.SettingUp;
+
+      private static RunningStats runningAverageAccelX;
+      private static RunningStats runningAverageAccelY;
+      private static RunningStats runningAverageAccelZ;
+      private static Vector3D averageG;
+      private static RunningStats rotRateAboutX;
+      private static RunningStats rotRateAboutY;
+      private static RunningStats rotRateAboutZ;
+      private static Vector3D averageRotationRate;
+      private static Double startingTimeStampSeconds_;
+      private static bool mayProceed(AccelerometerFrame_raw aRawFrame)
+      {
+         switch(initState_)
+         {
+            case InitState.SettingUp:
+            {
+               startingTimeStampSeconds_ = aRawFrame.TimeStampSeconds;
+               runningAverageAccelX = new RunningStats(Int32.MaxValue, false);
+               runningAverageAccelY = new RunningStats(Int32.MaxValue, false);
+               runningAverageAccelZ = new RunningStats(Int32.MaxValue, false);
+               rotRateAboutX = new RunningStats(Int32.MaxValue, false);
+               rotRateAboutY = new RunningStats(Int32.MaxValue, false);
+               rotRateAboutZ = new RunningStats(Int32.MaxValue, false);
+               initState_ = InitState.GettingAverageG;
+               return false;
+            }
+            case InitState.GettingAverageG:
+            {
+               runningAverageAccelX.Add(aRawFrame.Acceleration.X);
+               runningAverageAccelY.Add(aRawFrame.Acceleration.Y);
+               runningAverageAccelZ.Add(aRawFrame.Acceleration.Z);
+               rotRateAboutX.Add(aRawFrame.Rotation.X);
+               rotRateAboutY.Add(aRawFrame.Rotation.Y);
+               rotRateAboutZ.Add(aRawFrame.Rotation.Z);
+               if ((aRawFrame.TimeStampSeconds - startingTimeStampSeconds_) > 0.3)
+               {
+                  averageG = new Vector3D(
+                     runningAverageAccelX.RunningAverage,
+                     runningAverageAccelY.RunningAverage,
+                     runningAverageAccelZ.RunningAverage
+                     );
+
+                  averageRotationRate = new Vector3D(
+                     rotRateAboutX.RunningAverage,
+                     rotRateAboutY.RunningAverage,
+                     rotRateAboutZ.RunningAverage
+                     );
+
+                  initState_ = InitState.CleaningUp;
+                  return true;
+               }
+               return false;
+            }
+            case InitState.CleaningUp:
+            {
+               runningAverageAccelX = null;
+               runningAverageAccelY = null;
+               runningAverageAccelZ = null;
+               rotRateAboutX = null;
+               rotRateAboutY = null;
+               rotRateAboutZ = null;
+               initState_ = InitState.Done;
+               return true;
+            }
+         }
+         return true;
+      }
    }
 }
