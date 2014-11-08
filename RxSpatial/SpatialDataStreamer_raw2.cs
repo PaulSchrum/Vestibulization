@@ -35,12 +35,12 @@ namespace RxSpatial
             let e = evt.EventArgs
             select new AccelerometerFrame_raw
             (
-               e.spatialData[0].Acceleration[0],
-               e.spatialData[0].Acceleration[1],
-               e.spatialData[0].Acceleration[2],
-               e.spatialData[0].AngularRate[0],
-               e.spatialData[0].AngularRate[1],
-               e.spatialData[0].AngularRate[2]
+               accX: e.spatialData[0].Acceleration[0],
+               accY: e.spatialData[0].Acceleration[1],
+               accZ: e.spatialData[0].Acceleration[2],
+               rotX: e.spatialData[0].AngularRate[0],
+               rotY: e.spatialData[0].AngularRate[1],
+               rotZ: e.spatialData[0].AngularRate[2]
             )).Publish();
          stream.Connect();
          return stream;

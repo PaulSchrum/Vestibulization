@@ -153,11 +153,9 @@ namespace RxSpatial
          this.TotalAccel = Math.Sqrt(AccelX * AccelX + AccelY * AccelY + AccelZ * AccelZ);
          RunningStat.Add(AccelZ);
 
-
          updatePositionAndStuff(accelFrame_raw);
          foreach (var observer in this.accelObservers)
             observer.OnNext(accelFrame_raw);
-
 
          writeToFileIfNeeded();
 

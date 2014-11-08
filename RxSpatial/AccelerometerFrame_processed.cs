@@ -10,9 +10,7 @@ namespace RxSpatial
    public class AccelerometerFrame_processed : AccelerometerFrame_raw
    {
       public AccelerometerFrame_processed() : base(0,0,0,0,0,0)
-      {
-
-      }
+      { }
 
       public AccelerometerFrame_processed(
             AccelerometerFrame_raw currentRawFrame,
@@ -22,7 +20,9 @@ namespace RxSpatial
          if (null == currentRawFrame) 
             throw new NullReferenceException("currentRawFrame");
 
-         this.SecondsSinceLast = currentRawFrame.TimeStampSeconds - previousFrame.TimeStampSeconds;
+         this.SecondsSinceLast = 
+            currentRawFrame.TimeStampSeconds - 
+            previousFrame.TimeStampSeconds;
 
          if (false == mayProceed(currentRawFrame)) return;
          this.g = averageG;
@@ -48,9 +48,9 @@ namespace RxSpatial
                y: previousFrame.Position.Y + this.Velocity.Y * SecondsSinceLast,
                z: previousFrame.Position.Z + this.Velocity.Z * SecondsSinceLast);
             this.Orientation = new Vector3D(
-               x: previousFrame.Orientation.X + (currentRawFrame.Rotation.X - averageRotationRate.X) * SecondsSinceLast,
-               y: previousFrame.Orientation.Y + (currentRawFrame.Rotation.Y - averageRotationRate.Y) * SecondsSinceLast,
-               z: previousFrame.Orientation.Z + (currentRawFrame.Rotation.Y - averageRotationRate.Z) * SecondsSinceLast
+               x: previousFrame.Orientation.X + (currentRawFrame.RotationRate.X - averageRotationRate.X) * SecondsSinceLast,
+               y: previousFrame.Orientation.Y + (currentRawFrame.RotationRate.Y - averageRotationRate.Y) * SecondsSinceLast,
+               z: previousFrame.Orientation.Z + (currentRawFrame.RotationRate.Y - averageRotationRate.Z) * SecondsSinceLast
                );
          }
       }
@@ -129,9 +129,9 @@ namespace RxSpatial
                runningAverageAccelX.Add(aRawFrame.Acceleration.X);
                runningAverageAccelY.Add(aRawFrame.Acceleration.Y);
                runningAverageAccelZ.Add(aRawFrame.Acceleration.Z);
-               rotRateAboutX.Add(aRawFrame.Rotation.X);
-               rotRateAboutY.Add(aRawFrame.Rotation.Y);
-               rotRateAboutZ.Add(aRawFrame.Rotation.Z);
+               rotRateAboutX.Add(aRawFrame.RotationRate.X);
+               rotRateAboutY.Add(aRawFrame.RotationRate.Y);
+               rotRateAboutZ.Add(aRawFrame.RotationRate.Z);
                if ((aRawFrame.TimeStampSeconds - startingTimeStampSeconds_) > 0.3)
                {
                   averageG = new Vector3D(

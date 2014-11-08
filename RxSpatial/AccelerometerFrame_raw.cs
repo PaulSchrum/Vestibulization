@@ -14,7 +14,7 @@ namespace RxSpatial
       protected AccelerometerFrame_raw(AccelerometerFrame_raw other)
       {
          Acceleration = other.Acceleration;
-         Rotation = other.Rotation;
+         RotationRate = other.RotationRate;
          TimeStampTicks = other.TimeStampTicks;
       }
 
@@ -29,12 +29,12 @@ namespace RxSpatial
       {
          TimeStampTicks = stopwatch.ElapsedTicks;
          Acceleration = new Vector3D(accX, accY, accZ);
-         Rotation = new Vector3D(rotX, rotY, rotZ);
+         RotationRate = new Vector3D(rotX, rotY, rotZ);
       }
 
       
       public Vector3D Acceleration { get; internal set; }
-      public Vector3D Rotation { get; internal set; }
+      public Vector3D RotationRate { get; internal set; }
       public long TimeStampTicks { get; internal set; }
       public Double TimeStampSeconds { get { return TimeStampTicks / ticksPerSecond; } }
 
