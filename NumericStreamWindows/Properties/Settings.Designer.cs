@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace NumericStreamWindows.Properties
+namespace Vestibulization.Properties
 {
 
 

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace NumericStreamWindows.Properties
+namespace Vestibulization.Properties
 {
 
 
@@ -44,7 +44,7 @@ namespace NumericStreamWindows.Properties
          {
             if ((resourceMan == null))
             {
-               global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("NumericStreamWindows.Properties.Resources", typeof(Resources).Assembly);
+               global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Vestibulization.Properties.Resources", typeof(Resources).Assembly);
                resourceMan = temp;
             }
             return resourceMan;
