@@ -38,8 +38,8 @@ namespace RxSpatial
       public long TimeStampTicks { get; internal set; }
       public Double TimeStampSeconds { get { return TimeStampTicks / ticksPerSecond; } }
 
-      static System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-      static private Double ticksPerSecond { get; set; }
+      static public System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+      static protected Double ticksPerSecond { get; set; }
       static AccelerometerFrame_raw()
       {
          stopwatch.Start();

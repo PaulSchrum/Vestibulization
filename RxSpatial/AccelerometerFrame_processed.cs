@@ -53,6 +53,11 @@ namespace RxSpatial
                z: previousFrame.Orientation.Z + (currentRawFrame.RotationRate.Y - averageRotationRate.Z) * SecondsSinceLast
                );
          }
+         var frameProcessingTime =
+            (AccelerometerFrame_raw.stopwatch.ElapsedTicks - currentRawFrame.TimeStampTicks);
+         frameProcessingTimePercent = (100.0 * frameProcessingTime) /
+            (SecondsSinceLast * ticksPerSecond);
+         AverageFrameProcessingTimePercent.Add(frameProcessingTimePercent);
       }
 
       private void setTrueAcceleration(AccelerometerFrame_raw currentRawFrame)
@@ -82,6 +87,7 @@ namespace RxSpatial
       public Vector3D Position { get; internal set; }
       public Double SecondsSinceLast { get; internal set; }
       public Vector3D Orientation { get; internal set; }
+      public Double frameProcessingTimePercent { get; internal set; }
 
       public void SetGravityVectorWhileStill(Vector3D newG)
       {
@@ -99,6 +105,7 @@ namespace RxSpatial
       }
       private static InitState initState_ = InitState.SettingUp;
 
+      public static RunningStats AverageFrameProcessingTimePercent { get; internal set; }
       private static RunningStats runningAverageAccelX;
       private static RunningStats runningAverageAccelY;
       private static RunningStats runningAverageAccelZ;
@@ -121,6 +128,7 @@ namespace RxSpatial
                rotRateAboutX = new RunningStats(Int32.MaxValue, false);
                rotRateAboutY = new RunningStats(Int32.MaxValue, false);
                rotRateAboutZ = new RunningStats(Int32.MaxValue, false);
+               AverageFrameProcessingTimePercent = new RunningStats(120, false);
                initState_ = InitState.GettingAverageG;
                return false;
             }
