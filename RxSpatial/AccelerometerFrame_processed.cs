@@ -170,6 +170,10 @@ namespace RxSpatial
                initState_ = InitState.Done;
                return true;
             }
+            case InitState.Done:
+            {
+               break;
+            }
          }
          return true;
       }
