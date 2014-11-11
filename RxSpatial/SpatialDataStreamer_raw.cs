@@ -14,6 +14,11 @@ using System.Diagnostics;
 
 namespace RxSpatial
 {
+   /// <summary>
+   /// Deprecated.  Use SpatialDataStreamer_raw2 instead.
+   /// Use of this class is acceptable only for educational
+   /// purposes (to show how not to implement IObservable).
+   /// </summary>
    public class SpatialDataStreamer_raw : IObservable<AccelerometerFrame_raw>,
       IDisposable
    {

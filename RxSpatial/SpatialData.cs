@@ -10,6 +10,10 @@ using System.Windows.Media.Media3D;
 
 namespace RxSpatial
 {
+   /// <summary>
+   /// Deprecated.  Use only for educational purposes
+   /// of how not to implement it.
+   /// </summary>
    public class SpatialData
    {
       public Vector3D Acceleration { get; internal set; }
