@@ -71,7 +71,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SpatialDataStreamer_raw2.cs">
+    <Compile Include="SpatialDataStreamer_raw.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tuning.cs" />

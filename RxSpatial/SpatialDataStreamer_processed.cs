@@ -11,10 +11,10 @@ namespace RxSpatial
    public class SpatialDataStreamer_processed
    {
       public IObservable<AccelerometerFrame_processed> DeviceDataStream { get; private set; }
-      private SpatialDataStreamer_raw2 rawStreamer = null;
+      private SpatialDataStreamer_raw rawStreamer = null;
       public SpatialDataStreamer_processed()
       {
-         rawStreamer = SpatialDataStreamer_raw2.Create();
+         rawStreamer = SpatialDataStreamer_raw.Create();
          DeviceDataStream = SetupDeviceStream();
          DeviceDataStreamDebug = SetupDebugDeviceStream();
       }

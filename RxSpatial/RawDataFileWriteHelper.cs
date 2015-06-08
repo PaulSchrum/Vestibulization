@@ -12,7 +12,7 @@ namespace RxSpatial
       IObserver<AccelerometerFrame_raw>
    {
       private List<AccelerometerFrame_raw> allFrames { get; set; }
-      RxSpatial.SpatialDataStreamer_raw2 accelerometerDataStream = null;
+      RxSpatial.SpatialDataStreamer_raw accelerometerDataStream = null;
       IDisposable StreamSubscription { get; set; }
       private String filename_ { get; set; }
       private Timer recordingTimer_ { get; set; }
@@ -39,7 +39,7 @@ namespace RxSpatial
          recordingStateChanged_ = recordingStateChanged;
          allFrames = new List<AccelerometerFrame_raw>();
          this.filename_ = filename;
-         accelerometerDataStream = SpatialDataStreamer_raw2.Create();
+         accelerometerDataStream = SpatialDataStreamer_raw.Create();
          StreamSubscription =
             accelerometerDataStream.DeviceDataStream.Subscribe(this);
          startDelayTimer_ = new Timer(callback: _ => StartRecording(duration),

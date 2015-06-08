@@ -10,7 +10,7 @@ using System.Reactive;
 
 namespace RxSpatial
 {
-   public class SpatialDataStreamer_raw2
+   public class SpatialDataStreamer_raw
    {
       private static Spatial spatial = null;
 
@@ -18,12 +18,12 @@ namespace RxSpatial
       public event EventHandler CalibratingStateChanged;
       public event EventHandler WriteStateChanged;
 
-      private static SpatialDataStreamer_raw2 singleton;
-      public static SpatialDataStreamer_raw2 Create()
+      private static SpatialDataStreamer_raw singleton;
+      public static SpatialDataStreamer_raw Create()
       {
          if(null == singleton)
          {
-            singleton = new SpatialDataStreamer_raw2();
+            singleton = new SpatialDataStreamer_raw();
          }
          return singleton;
       }
@@ -51,7 +51,7 @@ namespace RxSpatial
 
       public IObservable<AccelerometerFrame_raw> DeviceDataStream { get; private set; }
 
-      private SpatialDataStreamer_raw2()
+      private SpatialDataStreamer_raw()
       {
          IsAttached = false;
          spatial = new Spatial();
@@ -91,7 +91,6 @@ namespace RxSpatial
             AttachedStateChanged(this, new BooleanState(isAttached_));
          }
       }
-
    }
 
    public class BooleanState : EventArgs
