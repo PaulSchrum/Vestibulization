@@ -17,19 +17,23 @@ namespace RxSpatial
       private String filename_ { get; set; }
       private Timer recordingTimer_ { get; set; }
       private Timer startDelayTimer_ { get; set; }
-      private Action recordingStateChanged_ { get; set; }
+      private Action<bool> recordingStateChanged_ { get; set; }
 
       private bool isRecording_;
       public bool isRecording
       {  get { return isRecording_; }
-         private set { isRecording_ = value; this.recordingStateChanged_(); }
+         private set 
+         { 
+            isRecording_ = value;
+            if (this.recordingStateChanged_ != null) this.recordingStateChanged_(isRecording_); 
+         }
       }
       //Next: Make recording state appear on the dialog box
       //then make a recording
       //then make a class to read the recording and play it back
 
       public RawDataFileWriteHelper(String filename, TimeSpan startDelay, TimeSpan duration,
-         Action recordingStateChanged = null)
+         Action<bool> recordingStateChanged = null)
       {
          isRecording = false;
          recordingStateChanged_ = recordingStateChanged;
@@ -60,6 +64,19 @@ namespace RxSpatial
 
          if (allFrames.Count == 0)
             return;
+
+         long count = 0;
+         long deltaSeconds = 0;
+         long timeAdjustment = 0;
+         foreach(var frame in allFrames)
+         {
+            if (count == 0)
+               timeAdjustment = frame.TimeStampTicks;
+            deltaSeconds = frame.TimeStampTicks - timeAdjustment;
+            frame.TimeStampTicks = deltaSeconds;
+               //(long) (deltaSeconds * AccelerometerFrame_raw.ticksPerSecond);
+            count++;
+         }
 
          using (var file = new StreamWriter(filename))
          {

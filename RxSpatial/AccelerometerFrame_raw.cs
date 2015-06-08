@@ -41,7 +41,7 @@ namespace RxSpatial
       public override string ToString()
       {
          sb.Clear();
-         sb.Append(TimeStampTicks).Append(",");
+         sb.AppendFormat("{0:0.########}", this.TimeStampSeconds).Append(",");
          sb.Append(Acceleration.X).Append(",");
          sb.Append(Acceleration.Y).Append(",");
          sb.Append(Acceleration.Z).Append(",");
@@ -53,7 +53,7 @@ namespace RxSpatial
       private static StringBuilder sb {get; set;}
 
       static public System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-      static protected Double ticksPerSecond { get; set; }
+      static internal protected Double ticksPerSecond { get; set; }
       static AccelerometerFrame_raw()
       {
          sb = new StringBuilder();
