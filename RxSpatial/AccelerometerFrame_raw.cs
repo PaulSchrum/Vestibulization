@@ -38,10 +38,25 @@ namespace RxSpatial
       public long TimeStampTicks { get; internal set; }
       public Double TimeStampSeconds { get { return TimeStampTicks / ticksPerSecond; } }
 
+      public override string ToString()
+      {
+         sb.Clear();
+         sb.Append(TimeStampTicks).Append(",");
+         sb.Append(Acceleration.X).Append(",");
+         sb.Append(Acceleration.Y).Append(",");
+         sb.Append(Acceleration.Z).Append(",");
+         sb.Append(RotationRate.X).Append(",");
+         sb.Append(RotationRate.Y).Append(",");
+         sb.Append(RotationRate.Z);
+         return sb.ToString();
+      }
+      private static StringBuilder sb {get; set;}
+
       static public System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
       static protected Double ticksPerSecond { get; set; }
       static AccelerometerFrame_raw()
       {
+         sb = new StringBuilder();
          stopwatch.Start();
          Thread.Sleep(2);
          var milliseconds1 = stopwatch.ElapsedMilliseconds;
