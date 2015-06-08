@@ -94,4 +94,9 @@ namespace RxSpatial
 
    }
 
+   public class BooleanState : EventArgs
+   {
+      internal BooleanState(bool isTrue_) { this.IsTrue = isTrue_; }
+      public bool IsTrue;
+   }
 }
