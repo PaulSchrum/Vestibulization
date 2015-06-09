@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Phidgets.Events;
+using System.Reactive.Linq;
+//using System.Reactive;
+using RxSpatial;
 
-namespace RxSpatial
+namespace RxSpatial.Streamers
 {
    public class SpatialDataStreamer_processed
    {
@@ -40,5 +41,4 @@ namespace RxSpatial
       }
 
    }
-
 }

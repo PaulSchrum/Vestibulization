@@ -68,19 +68,16 @@
     <Compile Include="RunningStats.cs" />
     <Compile Include="SmoothedData.cs" />
     <Compile Include="SpatialData.cs" />
-    <Compile Include="SpatialDataStreamer_processed.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SpatialDataStreamer_raw.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="SpatialDataStreamer_rawPhidgets1056_333.cs" />
+    <Compile Include="Streamers\SpatialDataStreamer_processed.cs" />
+    <Compile Include="Streamers\SpatialDataStreamer_raw.cs" />
+    <Compile Include="Streamers\SpatialDataStreamer_rawPhidgets1056_333.cs" />
     <Compile Include="Tuning.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

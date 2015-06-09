@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 using RxSpatial;
+using RxSpatial.Streamers;
 
 namespace Vestibulization
 {
@@ -14,7 +15,7 @@ namespace Vestibulization
       IObserver<AccelerometerFrame_processed>
       , INotifyPropertyChanged, IDisposable
    {
-      RxSpatial.SpatialDataStreamer_processed accelStream;
+      SpatialDataStreamer_processed accelStream;
       IDisposable streamSubscription;
 
       public ProcessedAccelStream_ViewModel()

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using RxSpatial.Streamers;
 
 namespace RxSpatial
 {
@@ -12,7 +13,7 @@ namespace RxSpatial
       IObserver<AccelerometerFrame_raw>
    {
       private List<AccelerometerFrame_raw> allFrames { get; set; }
-      RxSpatial.SpatialDataStreamer_raw accelerometerDataStream = null;
+      RxSpatial.Streamers.SpatialDataStreamer_raw accelerometerDataStream = null;
       IDisposable StreamSubscription { get; set; }
       private String filename_ { get; set; }
       private Timer recordingTimer_ { get; set; }

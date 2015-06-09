@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RxSpatial;
+using RxSpatial.Streamers;
 
 namespace Vestibulization
 {
@@ -12,15 +13,16 @@ namespace Vestibulization
       IObserver<AccelerometerFrame_raw>
       , INotifyPropertyChanged, IDisposable
    {
-      RxSpatial.SpatialDataStreamer_raw accelStream_raw=null;
+      SpatialDataStreamer_raw accelStream_raw=null;
       IDisposable StreamSubscription { get; set; }
       private RawDataFileWriteHelper dataStreamRecorder { get; set; }
 
       public RawAccelStream_ViewModel()
       {
          ctor_RawStream();
+         // uncomment this block to record a stream
          //OptionGyro = "+";
-         //dataStreamRecorder = new RawDataFileWriteHelper( filename:
+         //dataStreamRecorder = new RawDataFileWriteHelper(filename:
          //   @"C:\Users\Paul\Documents\Life\Presentations\Acceleromoter to 3d mouse\dev\test1.csv",
          //   startDelay: TimeSpan.FromSeconds(1.5), duration: TimeSpan.FromSeconds(3.0),
          //   recordingStateChanged: handleRecordingStateChanged);
@@ -29,15 +31,16 @@ namespace Vestibulization
       }
 
 
-      private void ctor_RawStream()
+      internal void ctor_RawStream()
       {
-         accelStream_raw = SpatialDataStreamer_raw.Create();
+         var acType = AccelerometerType.Phidgets1056_333;
+         accelStream_raw = SpatialDataStreamer_raw.Create(acType);
          StreamSubscription = 
             accelStream_raw
-            .DeviceDataStream.Subscribe(this);
+            .DataStream.Subscribe(this);
          accelStream_raw.AttachedStateChanged += AttachedStateChanged;
          accelStream_raw.CalibratingStateChanged += CalibratingStateChanged;
-         OptionValue = "Raw 2";
+         OptionValue = acType.ToString();
       }
 
       //RxSpatial.SpatialDataStreamer_processed accelStream_processed = null;

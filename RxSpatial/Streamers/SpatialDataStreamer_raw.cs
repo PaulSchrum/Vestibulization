@@ -8,7 +8,7 @@ using Phidgets.Events;
 using System.Reactive.Linq;
 using System.Reactive;
 
-namespace RxSpatial
+namespace RxSpatial.Streamers
 {
    public abstract class SpatialDataStreamer_raw
    {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
 using Phidgets;
@@ -9,7 +8,7 @@ using Phidgets.Events;
 using System.Reactive.Linq;
 using System.Reactive;
 
-namespace RxSpatial
+namespace RxSpatial.Streamers
 {
    public class SpatialDataStreamer_rawPhidgets1056_333 : SpatialDataStreamer_raw
    {
