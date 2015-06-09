@@ -62,6 +62,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AccelerometerFrame_raw.cs" />
+    <Compile Include="AccelerometerType.cs" />
     <Compile Include="RawData.cs" />
     <Compile Include="RawDataFileWriteHelper.cs" />
     <Compile Include="RunningStats.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="SpatialDataStreamer_raw.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SpatialDataStreamer_rawPhidgets1056_333.cs" />
     <Compile Include="Tuning.cs" />
   </ItemGroup>
   <ItemGroup>

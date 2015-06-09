@@ -10,74 +10,29 @@ using System.Reactive;
 
 namespace RxSpatial
 {
-   public class SpatialDataStreamer_raw
+   public abstract class SpatialDataStreamer_raw
    {
-      private static Spatial spatial = null;
-
       public event EventHandler AttachedStateChanged;
       public event EventHandler CalibratingStateChanged;
       public event EventHandler WriteStateChanged;
 
-      private static SpatialDataStreamer_raw singleton;
-      public static SpatialDataStreamer_raw Create()
+      protected static SpatialDataStreamer_raw singleton;
+      public static SpatialDataStreamer_raw Create(
+         AccelerometerType accType = AccelerometerType.Phidgets1056_333,
+         String dataFileName = null)
       {
          if(null == singleton)
          {
-            singleton = new SpatialDataStreamer_raw();
+            singleton = new SpatialDataStreamer_rawPhidgets1056_333();
          }
          return singleton;
       }
 
-      private IObservable<AccelerometerFrame_raw> SetupDeviceStream()
-      {
-         var stream =
-            (from evt in spatialEvents
-            let e = evt.EventArgs
-            select new AccelerometerFrame_raw
-            (
-               accX: e.spatialData[0].Acceleration[0],
-               accY: e.spatialData[0].Acceleration[1],
-               accZ: e.spatialData[0].Acceleration[2],
-               rotX: e.spatialData[0].AngularRate[0],
-               rotY: e.spatialData[0].AngularRate[1],
-               rotZ: e.spatialData[0].AngularRate[2]
-            )).Publish();
-         stream.Connect();
-         return stream;
-      }
-
       //private IDisposable subscription;
-      private IObservable<EventPattern<SpatialDataEventArgs>> spatialEvents;
+      public IObservable<AccelerometerFrame_raw> DeviceDataStream { get; protected set; }
 
-      public IObservable<AccelerometerFrame_raw> DeviceDataStream { get; private set; }
-
-      private SpatialDataStreamer_raw()
+      protected SpatialDataStreamer_raw()
       {
-         IsAttached = false;
-         spatial = new Spatial();
-         spatial.close();
-         spatial.Attach += new AttachEventHandler(spatial_Attach);
-         spatial.Detach += new DetachEventHandler(spatial_Detach);
-         //accelEventHandler = new SpatialDataEventHandler(spatial_SpatialData_raw);
-         //spatial.SpatialData += accelEventHandler;
-         spatialEvents = System.Reactive.Linq.Observable.FromEventPattern
-            <SpatialDataEventHandler, SpatialDataEventArgs>(
-            handler => handler.Invoke,
-            h => spatial.SpatialData += h,
-            h => spatial.SpatialData -= h);
-         //subscription = spatialEvents.Subscribe();
-         DeviceDataStream = SetupDeviceStream();
-         spatial.open(-1);
-      }
-
-      private void spatial_Attach(object sender, AttachEventArgs e)
-      {
-         IsAttached = true;
-      }
-
-      private void spatial_Detach(object sender, DetachEventArgs e)
-      {
-         IsAttached = false;
       }
 
       private bool isAttached_;

@@ -70,11 +70,12 @@ namespace RxSpatial
          foreach(var frame in allFrames)
          {
             if (count == 0)
+            {
                timeAdjustment = frame.TimeStampTicks;
+               count++;
+            }
             deltaSeconds = frame.TimeStampTicks - timeAdjustment;
             frame.TimeStampTicks = deltaSeconds;
-               //(long) (deltaSeconds * AccelerometerFrame_raw.ticksPerSecond);
-            count++;
          }
 
          using (var file = new StreamWriter(filename))
