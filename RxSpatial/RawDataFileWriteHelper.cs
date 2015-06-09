@@ -40,7 +40,7 @@ namespace RxSpatial
          this.filename_ = filename;
          accelerometerDataStream = SpatialDataStreamer_raw.Create();
          StreamSubscription =
-            accelerometerDataStream.DeviceDataStream.Subscribe(this);
+            accelerometerDataStream.DataStream.Subscribe(this);
          startDelayTimer_ = new Timer(callback: _ => StartRecording(duration),
             state: null, dueTime: startDelay, period: Timeout.InfiniteTimeSpan);
       }

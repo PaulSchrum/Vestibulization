@@ -22,13 +22,13 @@ namespace RxSpatial
       public IObservable<AccelerometerFrame_raw> DeviceDataStreamDebug { get; private set; }
       private IObservable<AccelerometerFrame_raw> SetupDebugDeviceStream()
       {
-         var v = rawStreamer.DeviceDataStream;
+         var v = rawStreamer.DataStream;
          return v;
       }
 
       private IObservable<AccelerometerFrame_processed> SetupDeviceStream()
       {
-         return rawStreamer.DeviceDataStream
+         return rawStreamer.DataStream
             .Scan(new AccelerometerFrame_processed(),
             (AccelerometerFrame_processed prevProcessedFrame, AccelerometerFrame_raw newRawFrame) =>
             {

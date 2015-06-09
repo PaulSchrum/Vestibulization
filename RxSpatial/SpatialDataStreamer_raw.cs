@@ -23,13 +23,16 @@ namespace RxSpatial
       {
          if(null == singleton)
          {
-            singleton = new SpatialDataStreamer_rawPhidgets1056_333();
+            if (accType == AccelerometerType.Phidgets1056_333)
+               singleton = new SpatialDataStreamer_rawPhidgets1056_333();
+            //else if (accType == AccelerometerType.File)
+            //   singleton = new SpatialDataStreamer_rawFile(dataFileName);
          }
          return singleton;
       }
 
-      //private IDisposable subscription;
-      public IObservable<AccelerometerFrame_raw> DeviceDataStream { get; protected set; }
+      //IDisposable subscription;
+      public IObservable<AccelerometerFrame_raw> DataStream { get; protected set; }
 
       protected SpatialDataStreamer_raw()
       {

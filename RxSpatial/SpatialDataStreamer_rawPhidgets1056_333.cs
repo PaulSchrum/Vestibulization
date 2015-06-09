@@ -31,7 +31,7 @@ namespace RxSpatial
             h => spatial.SpatialData += h,
             h => spatial.SpatialData -= h);
          //subscription = spatialEvents.Subscribe();
-         DeviceDataStream = SetupDeviceStream();
+         DataStream = SetupDeviceStream();
          spatial.open(-1);
       }
 
