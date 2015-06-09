@@ -28,8 +28,7 @@ namespace RxSpatial
             if (this.recordingStateChanged_ != null) this.recordingStateChanged_(isRecording_); 
          }
       }
-      //Next: Make recording state appear on the dialog box
-      //then make a recording
+      //refactor: make 1st line ticks per second
       //then make a class to read the recording and play it back
 
       public RawDataFileWriteHelper(String filename, TimeSpan startDelay, TimeSpan duration,
@@ -80,6 +79,7 @@ namespace RxSpatial
 
          using (var file = new StreamWriter(filename))
          {
+            file.WriteLine(AccelerometerFrame_raw.ticksPerSecond.ToString());
             foreach (var frame in allFrames)
             {
                file.WriteLine(frame.ToString());

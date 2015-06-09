@@ -57,6 +57,9 @@ namespace RxSpatial
       static AccelerometerFrame_raw()
       {
          sb = new StringBuilder();
+         ticksPerSecond = Stopwatch.Frequency;
+         //return;
+
          stopwatch.Start();
          Thread.Sleep(2);
          var milliseconds1 = stopwatch.ElapsedMilliseconds;
@@ -68,7 +71,8 @@ namespace RxSpatial
          var totalTicks = ticks2 - ticks1;
          var totalMs = milliseconds2 - milliseconds1;
 
-         ticksPerSecond = 1000.0 * (Double)(totalTicks / totalMs);
+         var ticksPerSecond_ = 1000.0 * ((Double)totalTicks / (Double)totalMs);
+         //var freq = Stopwatch.Frequency;
       }
 
    }
