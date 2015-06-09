@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NumericStreamWindows", "Vestibulization\NumericStreamWindows.csproj", "{662E4100-C281-4AE5-ABFA-81B006B507E4}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RxSpatial", "RxSpatial\RxSpatial.csproj", "{B9314FCD-2B91-46A1-A6FE-93B38ED841CF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RunningStatsUnitTests", "RunningStatsUnitTests\RunningStatsUnitTests.csproj", "{4289764E-1151-4849-9430-ED0858B965A1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TuningUnitTests", "TuningUnitTests\TuningUnitTests.csproj", "{D122B11E-ED49-4FFC-8492-0D750C9786E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NumericStreamWindows", "NumericStreamWindows\NumericStreamWindows.csproj", "{662E4100-C281-4AE5-ABFA-81B006B507E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{662E4100-C281-4AE5-ABFA-81B006B507E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{662E4100-C281-4AE5-ABFA-81B006B507E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{662E4100-C281-4AE5-ABFA-81B006B507E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{662E4100-C281-4AE5-ABFA-81B006B507E4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B9314FCD-2B91-46A1-A6FE-93B38ED841CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B9314FCD-2B91-46A1-A6FE-93B38ED841CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9314FCD-2B91-46A1-A6FE-93B38ED841CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +29,10 @@ Global
 		{D122B11E-ED49-4FFC-8492-0D750C9786E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D122B11E-ED49-4FFC-8492-0D750C9786E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D122B11E-ED49-4FFC-8492-0D750C9786E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{662E4100-C281-4AE5-ABFA-81B006B507E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{662E4100-C281-4AE5-ABFA-81B006B507E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{662E4100-C281-4AE5-ABFA-81B006B507E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{662E4100-C281-4AE5-ABFA-81B006B507E4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
