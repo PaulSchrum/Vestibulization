@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Reactive.Linq;
 
 namespace RxSpatial.Streamers
 {
@@ -39,10 +40,11 @@ namespace RxSpatial.Streamers
          }
          if (allFrames == null) throw new Exception("member allFrames unexpectedly null.");
          if (allFrames.Count < 2) throw new Exception("member allFrames unexpectedly empty.");
-         foreach(var frame in allFrames)
-         {
-             //add //frame to Observable.Generate
-         }
+         //var observable = Observable.Generate(
+         //   null,
+         //   n => null == n,
+
+         //   )
           //figure //out how to make this observable
       }
    }

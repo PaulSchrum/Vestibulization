@@ -63,6 +63,7 @@
     </Compile>
     <Compile Include="AccelerometerFrame_raw.cs" />
     <Compile Include="AccelerometerType.cs" />
+    <Compile Include="IEnumerableExtensionMethods.cs" />
     <Compile Include="RawData.cs" />
     <Compile Include="RawDataFileWriteHelper.cs" />
     <Compile Include="RunningStats.cs" />
