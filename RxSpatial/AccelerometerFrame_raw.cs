@@ -28,15 +28,40 @@ namespace RxSpatial
          )
       {
          TimeStampTicks = stopwatch.ElapsedTicks;
+         setValuesFromDoubles(accX, accY, accZ, rotX, rotY, rotZ);
+      }
+
+      internal AccelerometerFrame_raw(String[] valueStrings)
+      {
+         if(valueStrings.Length != 7) 
+            throw new ArgumentException("valueString does not contain exactly 7 strings.");
+         Double tsSeconds = Double.Parse(valueStrings[0]);
+         Double ax = Double.Parse(valueStrings[1]);
+         Double ay = Double.Parse(valueStrings[2]);
+         Double az = Double.Parse(valueStrings[3]);
+         Double rx = Double.Parse(valueStrings[4]);
+         Double ry = Double.Parse(valueStrings[5]);
+         Double rz = Double.Parse(valueStrings[6]);
+         setValuesFromDoubles(ax, ay, az, rx, ry, rz);
+         setTicksFromSeconds(tsSeconds);
+      }
+
+      private void setValuesFromDoubles
+         (double accX, double accY, double accZ, double rotX, double rotY, double rotZ)
+      {
          Acceleration = new Vector3D(accX, accY, accZ);
          RotationRate = new Vector3D(rotX, rotY, rotZ);
       }
 
-      
       public Vector3D Acceleration { get; internal set; }
       public Vector3D RotationRate { get; internal set; }
       public long TimeStampTicks { get; internal set; }
       public Double TimeStampSeconds { get { return TimeStampTicks / ticksPerSecond; } }
+
+      internal void setTicksFromSeconds(Double seconds)
+      {
+         TimeStampTicks = (long)(seconds * AccelerometerFrame_raw.ticksPerSecond);
+      }
 
       public override string ToString()
       {
@@ -58,23 +83,13 @@ namespace RxSpatial
       {
          sb = new StringBuilder();
          ticksPerSecond = Stopwatch.Frequency;
-         //return;
-
-         stopwatch.Start();
-         Thread.Sleep(2);
-         var milliseconds1 = stopwatch.ElapsedMilliseconds;
-         var ticks1 = stopwatch.ElapsedTicks;
-         Thread.Sleep(10);
-         var milliseconds2 = stopwatch.ElapsedMilliseconds;
-         var ticks2 = stopwatch.ElapsedTicks;
-
-         var totalTicks = ticks2 - ticks1;
-         var totalMs = milliseconds2 - milliseconds1;
-
-         var ticksPerSecond_ = 1000.0 * ((Double)totalTicks / (Double)totalMs);
-         //var freq = Stopwatch.Frequency;
       }
 
+
+      internal static void OverrideTicksPerSecond(double ticksPerSecond_)
+      {
+         ticksPerSecond = ticksPerSecond_;
+      }
    }
 
 }

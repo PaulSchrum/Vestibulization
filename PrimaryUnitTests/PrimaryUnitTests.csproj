@@ -50,11 +50,18 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="ProcessedDataObserver.cs" />
+    <Compile Include="AccelerometerUnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="TestFiles\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RxSpatial\RxSpatial.csproj">
+      <Project>{b9314fcd-2b91-46a1-a6fe-93b38ed841cf}</Project>
+      <Name>RxSpatial</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

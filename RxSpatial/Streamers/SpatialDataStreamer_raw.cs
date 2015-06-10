@@ -25,8 +25,8 @@ namespace RxSpatial.Streamers
          {
             if (accType == AccelerometerType.Phidgets1056_333)
                singleton = new SpatialDataStreamer_rawPhidgets1056_333();
-            //else if (accType == AccelerometerType.File)
-            //   singleton = new SpatialDataStreamer_rawFile(dataFileName);
+            else if (accType == AccelerometerType.File)
+               singleton = new SpatialDataStreamer_rawFile(dataFileName);
          }
          return singleton;
       }

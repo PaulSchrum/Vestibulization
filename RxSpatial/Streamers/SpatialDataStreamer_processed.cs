@@ -13,9 +13,11 @@ namespace RxSpatial.Streamers
    {
       public IObservable<AccelerometerFrame_processed> DeviceDataStream { get; private set; }
       private SpatialDataStreamer_raw rawStreamer = null;
-      public SpatialDataStreamer_processed()
+      public SpatialDataStreamer_processed(
+         AccelerometerType accType = AccelerometerType.Phidgets1056_333,
+         String dataFileName = null)
       {
-         rawStreamer = SpatialDataStreamer_raw.Create(AccelerometerType.Phidgets1056_333);
+         rawStreamer = SpatialDataStreamer_raw.Create(accType, dataFileName);
          DeviceDataStream = SetupDeviceStream();
          DeviceDataStreamDebug = SetupDebugDeviceStream();
       }
