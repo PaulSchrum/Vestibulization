@@ -42,22 +42,17 @@ namespace RxSpatial
             bool useAbsoluteScheduleTime = true
          )
       {
-         if (null == notifyWhenReady) throw new ArgumentNullException("notifyWhenReady");
          ObservableFromIEnumerable<T> retValue = new ObservableFromIEnumerable<T>();
 
          retValue.dataToSend = sourceStack;
          retValue.scheduleNextAt = scheduleNextFrame;
          retValue.absoluteTime = useAbsoluteScheduleTime;
-         retValue.nextFrame = retValue.dataToSend.Pop();
          retValue.notifyReady = notifyWhenReady;
 
-         retValue.nextFrameTimer = new Timer();
-         retValue.nextFrameTimer.Interval = 0;
-         retValue.nextFrameTimer.Elapsed += GoRecurse;
-
-         retValue.readyTimer = new Timer();
-         retValue.readyTimer.Interval = 5;
-         retValue.readyTimer.Elapsed += new ElapsedEventHandler(retValue.notifyThem);
+         retValue.isReady = true;
+         //retValue.readyTimer = new Timer();
+         //retValue.readyTimer.Interval = 5;
+         //retValue.readyTimer.Elapsed += new ElapsedEventHandler(retValue.notifyThem);
 
          return retValue;
       }
@@ -70,6 +65,7 @@ namespace RxSpatial
       protected Timer nextFrameTimer { get; set; }
       protected T nextFrame { get; set; }
       protected IObserver<T> onlySubscriber { get; set; }
+      public bool isReady { get; protected set; }
 
       public IDisposable Subscribe(IObserver<T> subscriber)
       {
@@ -80,7 +76,8 @@ namespace RxSpatial
       protected void notifyThem(object sender, ElapsedEventArgs e)
       {
          readyTimer.Enabled = false;
-         notifyReady();
+         this.isReady = true;
+         if(null != notifyReady) notifyReady();
       }
 
       private static void GoRecurse(object sender, ElapsedEventArgs e)
@@ -91,6 +88,12 @@ namespace RxSpatial
 
       public void Go()
       {
+         if(null == nextFrameTimer)
+         {
+            this.nextFrameTimer = new Timer();
+            this.nextFrame = dataToSend.Pop();
+         }
+
          if (this.nextFrame == null)
          {
             nextFrameTimer.Enabled = false;

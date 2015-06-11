@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RxSpatial.Streamers;
 using RxSpatial;
+using System.Diagnostics;
 
 namespace PrimaryUnitTests
 {
@@ -29,6 +30,7 @@ namespace PrimaryUnitTests
 
       public void OnCompleted()
       {
+         Debug.WriteLine("complete.");
          isComplete = true;
          if(null != whenComplete_) whenComplete_();
       }
@@ -41,6 +43,7 @@ namespace PrimaryUnitTests
       public void OnNext(AccelerometerFrame_processed value)
       {
          latestFrame = value;
+         Debug.WriteLine(latestFrame.ToString());
       }
 
       public void Dispose()
