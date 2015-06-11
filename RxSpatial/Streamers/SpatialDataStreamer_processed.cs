@@ -19,7 +19,14 @@ namespace RxSpatial.Streamers
       {
          rawStreamer = SpatialDataStreamer_raw.Create(accType, dataFileName);
          DeviceDataStream = SetupDeviceStream();
+         var v = DeviceDataStream;
          DeviceDataStreamDebug = SetupDebugDeviceStream();
+      }
+
+      public void Go_forRawFile()
+      {
+         if (rawStreamer is SpatialDataStreamer_rawFile)
+            (rawStreamer as SpatialDataStreamer_rawFile).Go();
       }
 
       public IObservable<AccelerometerFrame_raw> DeviceDataStreamDebug { get; private set; }

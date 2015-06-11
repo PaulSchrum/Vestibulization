@@ -7,6 +7,8 @@ using System.IO;
 using System.Reactive.Linq;
 using System.Diagnostics;
 using System.Timers;
+using Microsoft.Reactive.Testing;
+using System.Reactive;
 
 namespace RxSpatial.Streamers
 {
@@ -14,6 +16,7 @@ namespace RxSpatial.Streamers
    {
       internal List<AccelerometerFrame_raw> allFrames { get; set; }
       private Double ticksPerSecond_ { get; set; }
+      private TestScheduler sched { get; set; }
 
       internal SpatialDataStreamer_rawFile(String filename)
       {
@@ -44,31 +47,36 @@ namespace RxSpatial.Streamers
          if (allFrames == null) throw new Exception("member allFrames unexpectedly null.");
          if (allFrames.Count < 2) throw new Exception("member allFrames unexpectedly empty.");
 
-         DataStream = allFrames.AsObservable(frame => TimeSpan.FromSeconds(frame.TimeStampSeconds),
-            null,
-            true
-            );
-         var maxTime = Math.Max(1.0, filesize / 1048576);
-         Stopwatch sw = new Stopwatch();
-         var stream = DataStream as ObservableFromIEnumerable<AccelerometerFrame_raw>;
-         sw.Start();
-         while (false == stream.isReady)
-         {
-            Task.Delay(10);
-            var v = sw.Elapsed;
-            if (sw.Elapsed.Seconds > maxTime)
-               throw new TimeoutException("too long opening file");
-         }
-         var readyTimer = new Timer();
-         readyTimer.Interval = 5;
-         readyTimer.Elapsed += new ElapsedEventHandler(FileReadAndReady);
+         DataStream = SetupDeviceStream();
       }
 
-      private void FileReadAndReady(object sender, ElapsedEventArgs e)
+      private IObservable<AccelerometerFrame_raw> SetupDeviceStream()
       {
-         if (null != DataStream)
-            (DataStream as ObservableFromIEnumerable<AccelerometerFrame_raw>).Go();
+         var framesArray = new Recorded<Notification<AccelerometerFrame_raw>>[allFrames.Count+1];
+         int i = 0;
+         long timeStamp = 0;
+         foreach(var item in allFrames)
+         {
+            timeStamp += (long) (item.TimeStampSeconds * 1000.0);
+            framesArray[i] = new Recorded<Notification<AccelerometerFrame_raw>>(
+               timeStamp, 
+               Notification.CreateOnNext(item));
+            i++;
+         }
+         framesArray[i] = new Recorded<Notification<AccelerometerFrame_raw>>(
+               timeStamp + 10, 
+               Notification.CreateOnCompleted<AccelerometerFrame_raw>());
+
+         sched = new TestScheduler();
+         var preStream =sched.CreateColdObservable(framesArray);
+         var stream = preStream.Publish();
+         stream.Connect();
+         return stream;
       }
 
+      public void Go()
+      {
+         if (null != sched) sched.Start();
+      }
    }
 }

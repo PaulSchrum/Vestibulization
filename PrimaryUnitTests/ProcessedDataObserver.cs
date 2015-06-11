@@ -26,6 +26,7 @@ namespace PrimaryUnitTests
          accelStream = new SpatialDataStreamer_processed(
             AccelerometerType.File, sourceFileName);
          streamSubscription = accelStream.DeviceDataStream.Subscribe(this);
+         accelStream.Go_forRawFile();
       }
 
       public void OnCompleted()
