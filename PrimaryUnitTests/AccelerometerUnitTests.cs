@@ -12,8 +12,15 @@ namespace PrimaryUnitTests
       public void ProcessedData_1_NoMotion_ArrivesAt()
       {
          observer = new ProcessedDataObserver(
-            @"C:\SourceModules\ComputerVision\Vestibulization\PrimaryUnitTests\TestFiles\noMotion.csv"
+            @"C:\SourceModules\ComputerVision\Vestibulization\PrimaryUnitTests\TestFiles\noMotion.csv",
+            null
             );
+         observer.Go();
+      }
+
+      private void callMe()
+      {
+
       }
 
    }
